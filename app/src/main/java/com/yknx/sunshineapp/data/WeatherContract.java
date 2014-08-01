@@ -18,7 +18,8 @@ public class WeatherContract {
     public  static  final  String PATH_LOCATION = "location";
 
     public static Date getDateFromDb(String dateString) {
-        SimpleDateFormat dbDateFormat = new SimpleDateFormat();
+        dateString = dateString.replaceAll("/","");
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyyMMdd");
         try {
             return dbDateFormat.parse(dateString);
         }catch (ParseException e){

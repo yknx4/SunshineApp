@@ -8,6 +8,9 @@ import android.util.Pair;
 
 import com.yknx.sunshineapp.data.WeatherContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Yknx on 01/08/2014.
  */
@@ -54,10 +57,11 @@ public class Utility {
 
     static String formatDate(String dateString) {
         //TODO: FIX!!!!
-        /*Date date = WeatherContract.getDateFromDb(dateString);
-        String res = getDateInstance().format(date);
-        return res==null?dateString:res;*/
-        return  dateString;
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        Date date = WeatherContract.getDateFromDb(dateString);
+        String res = sdf.format(date);
+        return res;
+
     }
 
 }

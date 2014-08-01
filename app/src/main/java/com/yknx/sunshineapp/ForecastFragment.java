@@ -190,8 +190,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     String detailString = String.format("%s - %s - %s/%s",
                             dateString, weatherDescription, high, low);
 
+                    //Intent intent = new Intent(getActivity(), DetailActivity.class)
+                    //       .putExtra(Intent.EXTRA_TEXT, detailString);
+
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, detailString);
+                            .putExtra(Intent.EXTRA_TEXT, cursor.getString(COL_WEATHER_DATE));
+
                     startActivity(intent);
                 }
             }
