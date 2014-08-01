@@ -1,0 +1,22 @@
+<resources>
+        <string name="title_activity_settings">Settings</string>
+
+
+    <string name="pref_title_postalcode">Postal Code</string>
+    <string name="pref_default_postalcode" translatable="false">28984</string>
+    <string name="pref_title_country">Country Code</string>
+    <string name="pref_default_country" translatable="false">MX</string>
+
+    <string-array
+        name="pref_values_units">
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array> <string-array
+    name="pref_show_units">
+    <item>Metric</item>
+    <item>Imperial</item>
+</string-array>
+
+
+
+</resources>
