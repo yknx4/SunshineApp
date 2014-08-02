@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yknx.sunshineapp.data.WeatherContract;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link Cursor} to a {@link android.widget.ListView}.
@@ -63,7 +65,7 @@ public class ForecastAdapter extends CursorAdapter {
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
         // Use placeholder image for now
 
-        viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
+
 
         // Read date from cursor
         String dateString = cursor.getString(ForecastFragment.COL_WEATHER_DATE);
@@ -85,6 +87,18 @@ public class ForecastAdapter extends CursorAdapter {
         String highTemperature = Utility.formatTemperature(mContext,high,isMetric);
 
         viewHolder.highTempView.setText(highTemperature);
+
+        int dbIconId = cursor.getInt(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
+        int iconResource=0;
+        
+        if(cursor.getPosition()==0){
+            iconResource = Utility.getArtResourceForWeatherCondition(dbIconId);
+        }
+        else {
+            iconResource = Utility.getIconResourceForWeatherCondition(dbIconId);
+        }
+
+        viewHolder.iconView.setImageResource(iconResource);
 
 
 
