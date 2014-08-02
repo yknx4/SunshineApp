@@ -90,7 +90,7 @@ public class ForecastAdapter extends CursorAdapter {
 
         int dbIconId = cursor.getInt(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
         int iconResource=0;
-        
+
         if(cursor.getPosition()==0){
             iconResource = Utility.getArtResourceForWeatherCondition(dbIconId);
         }
