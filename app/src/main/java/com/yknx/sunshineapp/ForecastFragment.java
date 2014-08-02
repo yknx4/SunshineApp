@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.yknx.sunshineapp.data.WeatherContract;
 import com.yknx.sunshineapp.data.WeatherContract.LocationEntry;
@@ -31,7 +29,7 @@ import java.util.Date;
  * Created by Yknx on 30/07/2014.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
-    SimpleCursorAdapter mForecastAdapter;
+    ForecastAdapter mForecastAdapter;
     final String LOG_TAG = ForecastFragment.class.getSimpleName();
     public ForecastFragment() {
     }
@@ -127,26 +125,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //ROOT VIEW
-        mForecastAdapter = new SimpleCursorAdapter(
+        mForecastAdapter = new ForecastAdapter(
                 getActivity(),
-                R.layout.list_item_forecast_full,
                 null,
-                new String[]{
-                        WeatherEntry.COLUMN_DATETEXT,
-                        WeatherEntry.COLUMN_SHORT_DESC,
-                        WeatherEntry.COLUMN_MAX_TEMP,
-                        WeatherEntry.COLUMN_MIN_TEMP
-                },
-                new int[]{
-                        R.id.list_item_date_textview,
-                        R.id.list_item_forecast_textview,
-                        R.id.list_item_high_textview,
-                        R.id.list_item_low_textview
-                },
                 0
         );
 
-        mForecastAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+        /*mForecastAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                 boolean isMetric = Utility.isMetric(getActivity());
@@ -167,7 +152,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 return false;
             }
-        });
+        });*/
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -183,8 +168,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
                     boolean isMetric = Utility.isMetric(getActivity());
                     String high = Utility.formatTemperature(
+                            getActivity(),
                             cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
                     String low = Utility.formatTemperature(
+                            getActivity(),
                             cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
                     String detailString = String.format("%s - %s - %s/%s",

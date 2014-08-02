@@ -45,6 +45,10 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.LocationEntry.COLUMN_LOCATION_POSTALCODE,
             WeatherContract.LocationEntry.COLUMN_LOCATION_COUNTRYCODE
     };
@@ -170,12 +174,18 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
         TextView forecast = (TextView) getView().findViewById(R.id.detail_forecast_textview);
         TextView highT = (TextView) getView().findViewById(R.id.detail_high_textview);
         TextView lowT = (TextView) getView().findViewById(R.id.detail_low_textview);
+        TextView humidity = (TextView) getView().findViewById(R.id.detail_humidity_textview);
+        TextView wind = (TextView) getView().findViewById(R.id.detail_wind_textview);
+        TextView pressure = (TextView) getView().findViewById(R.id.detail_pressure_textview);
 
         if (data.moveToFirst()) {
             date.setText(Utility.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
             forecast.setText(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC)));
-            highT.setText(Utility.formatTemperature(data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)),Utility.isMetric(getActivity())));
-            lowT.setText(Utility.formatTemperature(data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)),Utility.isMetric(getActivity())));
+            highT.setText(Utility.formatTemperature(getActivity(),data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)),Utility.isMetric(getActivity())));
+            lowT.setText(Utility.formatTemperature(getActivity(),data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)),Utility.isMetric(getActivity())));
+            humidity.setText(getActivity().getString(R.string.format_humidity,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
+            pressure.setText(getActivity().getString(R.string.format_pressure,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE))));
+            wind.setText(Utility.getFormattedWind(getActivity(),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES))));
         } else {
             Log.e(LOG_TAG,"Cursor failed to load.");
         }
