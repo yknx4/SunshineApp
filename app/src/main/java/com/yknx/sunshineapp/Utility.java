@@ -9,6 +9,7 @@ import android.util.Pair;
 import com.yknx.sunshineapp.data.WeatherContract;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -47,21 +48,73 @@ public class Utility {
 
     static String formatTemperature(double temperature, boolean isMetric) {
         double temp;
+        String res,grades;
         if ( !isMetric ) {
             temp = 9*temperature/5+32;
+            grades = "°C";
         } else {
             temp = temperature;
+            grades = "°F";
         }
-        return String.format("%.0f", temp);
+        res = String.format("%.0f ", temp);
+        return res+grades;
     }
 
     static String formatDate(String dateString) {
         //TODO: FIX!!!!
-        SimpleDateFormat sdf = new SimpleDateFormat();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE d");
+        String res;
         Date date = WeatherContract.getDateFromDb(dateString);
-        String res = sdf.format(date);
+
+
+        int days = daysAfterBeforeToday(date);
+        switch (days){
+            default:
+                res = sdf.format(date);
+                break;
+            case -1:
+                res = "Yesterday";
+                break;
+            case 0:
+                res = "Today";
+                break;
+            case  1:
+                res = "Tomorrow";
+                break;
+
+        }
+
+
         return res;
 
+    }
+
+    static  int daysAfterBeforeToday(Date to){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+
+       // Date today = c.getTime();
+
+        long todayInMillis = c.getTimeInMillis();
+
+        c.setTime(to);
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+
+        long toInMillis = c.getTimeInMillis();
+
+        long days = toInMillis-todayInMillis;
+
+        long total = days / 86400000;
+        int result = (int) total;
+
+
+        return  result;
     }
 
 }
