@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yknx.sunshineapp.data.WeatherContract;
@@ -50,7 +51,8 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.LocationEntry.COLUMN_LOCATION_POSTALCODE,
-            WeatherContract.LocationEntry.COLUMN_LOCATION_COUNTRYCODE
+            WeatherContract.LocationEntry.COLUMN_LOCATION_COUNTRYCODE,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
 
@@ -177,6 +179,7 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
         TextView humidity = (TextView) getView().findViewById(R.id.detail_humidity_textview);
         TextView wind = (TextView) getView().findViewById(R.id.detail_wind_textview);
         TextView pressure = (TextView) getView().findViewById(R.id.detail_pressure_textview);
+        ImageView weatherIcon = (ImageView) getView().findViewById(R.id.detail_weathericon);
 
         if (data.moveToFirst()) {
             date.setText(Utility.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
@@ -186,6 +189,8 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
             humidity.setText(getActivity().getString(R.string.format_humidity,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
             pressure.setText(getActivity().getString(R.string.format_pressure,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE))));
             wind.setText(Utility.getFormattedWind(getActivity(),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES))));
+            weatherIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID))));
+
         } else {
             Log.e(LOG_TAG,"Cursor failed to load.");
         }

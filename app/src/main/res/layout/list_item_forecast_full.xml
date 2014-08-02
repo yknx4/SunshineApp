@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list_item_weathericon"
-        android:src="@drawable/ic_launcher"
         android:layout_gravity="center" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
