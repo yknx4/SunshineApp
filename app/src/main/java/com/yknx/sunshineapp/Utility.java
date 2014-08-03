@@ -48,11 +48,16 @@ public class Utility {
                 context.getString(R.string.pref_default_tunits))
                         .equals(context.getString(R.string.pref_default_tunits));
     }
+    public static boolean areNotificationsEnabled(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(context.getString(R.string.pref_key_enabled_notification),true);
+    }
 
-    static String formatTemperature(Context context,double temperature, boolean isMetric) {
+   public static String formatTemperature(Context context,double temperature) {
         double temp;
+
         String res;
-        if ( !isMetric ) {
+        if ( !isMetric(context) ) {
             temp = 9*temperature/5+32;
         } else {
             temp = temperature;
@@ -316,5 +321,11 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    public static String getPreferredLocationinString(Context mContext) {
+        Pair<String,String> loc = getPreferredLocation(mContext);
+        return loc.first+","+loc.second;
+
     }
 }

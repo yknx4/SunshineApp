@@ -5,7 +5,6 @@
     <string name="content_authority">com.yknx.sunshineapp</string>
 
 
-
     <string name="app_name">Sunshine</string>
 
     <string name="action_settings">Settings</string>
@@ -16,6 +15,15 @@
     <string name="pref_key_tunits">temperatureUnits</string>
     <string name="pref_title_tunits">Temperature Units</string>
     <string name="pref_default_tunits">Metric</string>
+
+    <string name="pref_last_notification">last_notification</string>
+    <string name="format_notification">
+        Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</xliff:g>
+        Low: <xliff:g id="low">%3$s</xliff:g>
+    </string>
+
+
+
     <string name="action_showOnMap">Show on map</string>
     <string name="action_share">Share</string>
     <!-- Date label when displaying today's weather forecast [CHAR LIMIT=20] -->
@@ -46,6 +54,8 @@ Wind: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</x
 
     <!-- Humidity format CHAR LIMIT=25]-->
     <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
+    <string name="pref_key_enabled_notification">notification_enabled</string>
+    <string name="pref_tite_enabled_notification">Enable Notifications</string>
 
 
 </resources>

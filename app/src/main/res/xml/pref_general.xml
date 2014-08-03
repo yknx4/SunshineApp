@@ -27,6 +27,10 @@
         android:entries="@array/pref_show_units"
         android:defaultValue="@string/pref_default_tunits"
         android:entryValues="@array/pref_values_units"/>
+    <CheckBoxPreference
+        android:key="@string/pref_key_enabled_notification"
+        android:title="@string/pref_tite_enabled_notification"
+        android:defaultValue="true"/>
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->

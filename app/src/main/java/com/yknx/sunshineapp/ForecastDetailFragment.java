@@ -258,8 +258,8 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
 */
             date.setText(Utility.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
             forecast.setText(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC)));
-            highT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), Utility.isMetric(getActivity())));
-            lowT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), Utility.isMetric(getActivity())));
+            highT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP))));
+            lowT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP))));
             humidity.setText(getActivity().getString(R.string.format_humidity, data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
             pressure.setText(getActivity().getString(R.string.format_pressure, data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE))));
             wind.setText(Utility.getFormattedWind(getActivity(), data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)), data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES))));
