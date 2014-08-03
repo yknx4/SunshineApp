@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="sync_account_type">yknx.com</string>
+    <string name="sync_account_type">sunshineapp.yknx.com</string>
     <string name="content_authority">com.yknx.sunshineapp</string>
 
 

@@ -47,7 +47,7 @@
         <!--
         <service android:name=".service.SunshineService" />
         <receiver android:name=".service.SunshineService$AlarmReceiver" />-->
-
+        <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.SunshineAuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -57,14 +57,19 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <service android:name=".sync.SunshineAuthenticatorService">
+
+        <!-- The syncadapter service -->
+        <service
+            android:name=".sync.SunshineSyncService"
+            android:exported="true" >
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
             <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
         </service>
+
 
 
 
