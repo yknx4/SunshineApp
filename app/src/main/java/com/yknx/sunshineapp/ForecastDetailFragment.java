@@ -26,12 +26,11 @@ import com.yknx.sunshineapp.data.WeatherContract;
 /**
  * Created by Yknx on 31/07/2014.
  */
-public class ForecastDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ForecastDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private static final int DETAIL_LOADER = 0;
-    private Pair<String,String> mLocation;
-
+    private static final String POSTAL_KEY = "location";
     // For the forecast view we're showing only a small subset of the stored data.
 // Specify the columns we need.
     private static final String[] FORECAST_COLUMNS = {
@@ -54,46 +53,95 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
             WeatherContract.LocationEntry.COLUMN_LOCATION_COUNTRYCODE,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
-
-
-
-
+    private static final String FORECAST_KEY = "forecast";
+    public final String COUNTRY_KEY = "country";
+    public static final String LOCATION_KEY = "location";
     private final String LOG_TAG = ForecastDetailFragment.class.getSimpleName();
-    private  String mForecastStr;
+    private Pair<String, String> mLocation;
+
+    private String forecastStr;
+    private String mDateStr;
+    private TextView date;
+    private TextView forecast;
+    private TextView highT;
+    private TextView lowT;
+    private TextView humidity;
+    private TextView wind;
+    private TextView pressure;
+    private ImageView weatherIcon;
+    private String mForecastStr;
     private ShareActionProvider mShareActionProvider;
+
     public ForecastDetailFragment() {
         setHasOptionsMenu(true);
     }
+
+    public static ForecastDetailFragment newInstance(String date) {
+        ForecastDetailFragment f = new ForecastDetailFragment();
+
+        Bundle args = new Bundle();
+        args.putString("date", date);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putString(FORECAST_KEY, mForecastStr);
+        if(mLocation == null) mLocation = Utility.getPreferredLocation(getActivity());
+        outState.putString(POSTAL_KEY, mLocation.first);
+        outState.putString(COUNTRY_KEY, mLocation.second);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    public String getShownDate() {
+        return getArguments().getString("date");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent = getActivity().getIntent();
+        if (intent != null && intent.hasExtra(DetailActivity.DATE_KEY) &&
+                mLocation != null) {
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
+    }
+
+
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuItem item = menu.findItem(R.id.action_share);
+        if (item == null) return;
         mShareActionProvider = new ShareActionProvider(getView().getContext());
-        MenuItemCompat.setActionProvider(item,mShareActionProvider);
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
         inflater.inflate(R.menu.detailfragment, menu);
 
 
-        Log.d(LOG_TAG,item.toString());
+        Log.d(LOG_TAG, item.toString());
         //mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 
 
-
-        if(mShareActionProvider!=null){
+        if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());
-        }
-        else Log.e(LOG_TAG,"No Sharing Provider");
+        } else Log.e(LOG_TAG, "No Sharing Provider");
 
 
     }
-    private Intent createShareForecastIntent(){
+
+    private Intent createShareForecastIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT,mForecastStr+" #SunshineApp");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastStr + " #SunshineApp");
         return shareIntent;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -119,43 +167,68 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            Pair<String, String> newLocation;
+            newLocation = Pair.create(savedInstanceState.getString(POSTAL_KEY), savedInstanceState.getString(COUNTRY_KEY));
+            mLocation = newLocation;
+        }
+
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
         /*Intent originalMessage = getActivity().getIntent();
         TextView data = (TextView) rootView.findViewById(R.id.textview_forecastData);
         mForecastStr = originalMessage.getStringExtra(Intent.EXTRA_TEXT);
         data.setText(mForecastStr);*/
-        Intent originalIntend = getActivity().getIntent();
-        Bundle loaderArgs = new Bundle();
-        loaderArgs.putString(WeatherContract.WeatherEntry.COLUMN_DATETEXT,originalIntend.getStringExtra(Intent.EXTRA_TEXT));
-        getLoaderManager().initLoader(DETAIL_LOADER,loaderArgs,this);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mDateStr = arguments.getString(DetailActivity.DATE_KEY);
+        }
+
+
+        if (savedInstanceState != null) {
+            mLocation = Pair.create(savedInstanceState.getString(POSTAL_KEY), savedInstanceState.getString(COUNTRY_KEY));
+        }
+
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        date = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        forecast = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
+        highT = (TextView) rootView.findViewById(R.id.detail_high_textview);
+        lowT = (TextView) rootView.findViewById(R.id.detail_low_textview);
+        humidity = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+        wind = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+        pressure = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
+        weatherIcon = (ImageView) rootView.findViewById(R.id.detail_weathericon);
+
 
         return rootView;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(args==null) {
-            throw new UnsupportedOperationException("No arguments supplied");
-        }
+        Log.v(LOG_TAG, "In onCreateLoader");
+
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATETEXT+ "ASC";
         // This is called when a new Loader needs to be created.  This
         // fragment only uses one loader, so we don't care about checking the id.
 
         // To only show current and future dates, get the String representation for today,
         // and filter the query to return weather only for dates after or including today.
         // Only return data after today.
-        String specificDate = args.getString(WeatherContract.WeatherEntry.COLUMN_DATETEXT);
-
+        //String specificDate = args.getString(WeatherContract.WeatherEntry.COLUMN_DATETEXT);
+        //String specificDate = getArguments().getString(DetailActivity.DATE_KEY);
 
 
         mLocation = Utility.getPreferredLocation(getActivity());
         Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                mLocation.first, mLocation.second, specificDate);
+                mLocation.first, mLocation.second, mDateStr);
 
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
@@ -172,33 +245,33 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         //mForecastAdapter.swapCursor(data);
-        TextView date = (TextView) getView().findViewById(R.id.detail_date_textview);
-        TextView forecast = (TextView) getView().findViewById(R.id.detail_forecast_textview);
-        TextView highT = (TextView) getView().findViewById(R.id.detail_high_textview);
-        TextView lowT = (TextView) getView().findViewById(R.id.detail_low_textview);
-        TextView humidity = (TextView) getView().findViewById(R.id.detail_humidity_textview);
-        TextView wind = (TextView) getView().findViewById(R.id.detail_wind_textview);
-        TextView pressure = (TextView) getView().findViewById(R.id.detail_pressure_textview);
-        ImageView weatherIcon = (ImageView) getView().findViewById(R.id.detail_weathericon);
 
-        if (data.moveToFirst()) {
+        if (data != null && data.moveToFirst()) {
+            /*date = (TextView) getView().findViewById(R.id.detail_date_textview);
+            forecast = (TextView) getView().findViewById(R.id.detail_forecast_textview);
+            highT = (TextView) getView().findViewById(R.id.detail_high_textview);
+            lowT = (TextView) getView().findViewById(R.id.detail_low_textview);
+            humidity = (TextView) getView().findViewById(R.id.detail_humidity_textview);
+            wind = (TextView) getView().findViewById(R.id.detail_wind_textview);
+            pressure = (TextView) getView().findViewById(R.id.detail_pressure_textview);
+            weatherIcon = (ImageView) getView().findViewById(R.id.detail_weathericon);
+*/
             date.setText(Utility.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
             forecast.setText(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC)));
-            highT.setText(Utility.formatTemperature(getActivity(),data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)),Utility.isMetric(getActivity())));
-            lowT.setText(Utility.formatTemperature(getActivity(),data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)),Utility.isMetric(getActivity())));
-            humidity.setText(getActivity().getString(R.string.format_humidity,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
-            pressure.setText(getActivity().getString(R.string.format_pressure,data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE))));
-            wind.setText(Utility.getFormattedWind(getActivity(),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)),data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES))));
+            highT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), Utility.isMetric(getActivity())));
+            lowT.setText(Utility.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), Utility.isMetric(getActivity())));
+            humidity.setText(getActivity().getString(R.string.format_humidity, data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
+            pressure.setText(getActivity().getString(R.string.format_pressure, data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE))));
+            wind.setText(Utility.getFormattedWind(getActivity(), data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED)), data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES))));
             weatherIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID))));
-
+            mForecastStr = String.format("%s - %s - %s/%s", date.getText(), forecast.getText(), highT.getText(), lowT.getText());
         } else {
-            Log.e(LOG_TAG,"Cursor failed to load.");
+            Log.e(LOG_TAG, "Cursor failed to load.");
         }
 
-        mForecastStr = String.format("%s - %s - %s/%s",date.getText(),forecast.getText(),highT.getText(),lowT.getText());
+
         //date.setText(mForecastStr);
     }
-
 
 
     @Override

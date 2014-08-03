@@ -6,57 +6,69 @@
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin">
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/touch_selector">
 
+<LinearLayout
+    android:layout_width="64sp"
+    android:layout_height="64sp"
+    android:gravity="center"
+    >
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list_item_weathericon"
         android:layout_gravity="center" />
-
+</LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:orientation="vertical" android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_weight="1">
+        android:layout_weight="5">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Today"
+        android:fontFamily="sans-serif-condensed"
         android:id="@+id/list_item_date_textview"
-        android:textAppearance="@android:style/TextAppearance.Holo.Large" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Asteroids"
+        android:fontFamily="sans-serif-condensed"
         android:id="@+id/list_item_forecast_textview"
-        android:textAppearance="@android:style/TextAppearance.Holo.Medium" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
 
 
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:orientation="vertical" android:layout_width="wrap_content"
+        android:orientation="vertical" android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:layout_weight="2"
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="21~"
+            android:fontFamily="sans-serif-condensed"
             android:id="@+id/list_item_high_textview"
-            android:textAppearance="@android:style/TextAppearance.Holo.Medium" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="23~"
+            android:fontFamily="sans-serif-condensed"
             android:id="@+id/list_item_low_textview"
-            android:textAppearance="@android:style/TextAppearance.Holo.Small" />
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
         </LinearLayout>
 </LinearLayout>

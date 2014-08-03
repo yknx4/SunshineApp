@@ -321,13 +321,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] result) {
-        /*if (result != null) {
-            mForecastAdapter.swapCursor(null);
-            for(String dayForecastStr : result) {
-                mForecastAdapter.add(dayForecastStr);
-            }
-            // New data is back from the server.  Hooray!
-        }*/
     }
 
     private long addLocation(String locationSetting, String cityName, double lat, double lon){

@@ -7,6 +7,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import com.yknx.sunshineapp.data.WeatherContract;
+import com.yknx.sunshineapp.sync.SunshineSyncAdapter;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -60,9 +61,7 @@ public class SettingsActivity extends PreferenceActivity
         // are we starting the preference activity?
         if ( !mBindingPreference ) {
             if (preference.getKey().equals(getString(R.string.pref_key_postalcode))) {
-                FetchWeatherTask weatherTask = new FetchWeatherTask(this);
-                String location = value.toString();
-                weatherTask.execute(location);
+                SunshineSyncAdapter.syncImmediately(getApplicationContext());
             } else {
                 // notify code that weather may be impacted
                 getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);

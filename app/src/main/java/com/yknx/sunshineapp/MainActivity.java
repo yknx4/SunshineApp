@@ -6,18 +6,29 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.yknx.sunshineapp.sync.SunshineSyncAdapter;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements ForecastFragment.CallbackListener {
+
+    boolean mTwoPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
-                    .commit();
-        }
+        if(findViewById(R.id.weather_detail_container)!=null){
+            mTwoPanel = true;
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.weather_detail_container,new ForecastDetailFragment()).commit();
+
+
+        }else mTwoPanel=false;
+        ForecastFragment mForeFrag = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        mForeFrag.setTwoPanel(mTwoPanel);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
 
@@ -40,6 +51,23 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(String date) {
+        if(mTwoPanel){
+            Bundle args = new Bundle();
+            args.putString(DetailActivity.DATE_KEY,date);
+
+            ForecastDetailFragment fragment = new ForecastDetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.weather_detail_container,fragment).commit();
+        }
+        else {
+            Intent inten = new Intent(this,DetailActivity.class).putExtra(DetailActivity.DATE_KEY,date);
+            startActivity(inten);
+        }
     }
 
     /**

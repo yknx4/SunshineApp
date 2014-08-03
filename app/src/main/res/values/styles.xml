@@ -5,4 +5,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ForecastListStyle"></style>
+    <style name="List_item_textview_default">
+        <item name="android:typeface">serif</item>
+
+    </style>
+
 </resources>
