@@ -59,7 +59,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherEntry.COLUMN_MIN_TEMP,
             LocationEntry.COLUMN_LOCATION_POSTALCODE,
             LocationEntry.COLUMN_LOCATION_COUNTRYCODE,
-            WeatherEntry.COLUMN_WEATHER_ID
+            WeatherEntry.COLUMN_WEATHER_ID,
+            LocationEntry.COLUMN_LOCATION_LAT,
+            LocationEntry.COLUMN_LOCATION_LONG
     };
     final String LOG_TAG = ForecastFragment.class.getSimpleName();
     ForecastAdapter mForecastAdapter;
@@ -121,9 +123,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void showMap() {
+        Uri geoLocation ;
+        if(locationUri!=null){
+            geoLocation= Uri.parse(locationUri);
+        }
+        else {
+            geoLocation= Uri.parse("geo:0,0?q=" + getLocationString());
+        }
 
-
-        Uri geoLocation = Uri.parse("geo:0,0?q=" + getLocationString());
         Log.d(LOG_TAG, geoLocation.toString());
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(geoLocation);
@@ -257,12 +264,20 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         );
     }
 
+    private String locationUri=null;
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.getCount()==0){
             SunshineSyncAdapter.syncImmediately(getActivity());
         }
+        if(data.moveToFirst()){
+            double lat = data.getDouble(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_LAT));
+            double longi = data.getDouble(data.getColumnIndex(LocationEntry.COLUMN_LOCATION_LONG));
+            locationUri = "geo:"+lat+","+longi;
+        }
         mForecastAdapter.swapCursor(data);
+
         if (mListviewPosition != ListView.INVALID_POSITION) {
             listView.setSelection(mListviewPosition);
         }

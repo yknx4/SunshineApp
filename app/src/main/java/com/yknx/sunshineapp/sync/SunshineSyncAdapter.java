@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -162,7 +163,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
-        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS || true) {
+        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS ) {
             Pair<String, String> locationQuery = Utility.getPreferredLocation(mContext);
             Uri weatherUri = WeatherEntry.buildWeatherLocationWithDate(locationQuery.first, locationQuery.second, WeatherContract.getDbDateString(new Date()));
 
@@ -219,6 +220,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
+
         Log.d(LOG_TAG, "Starting sync");
         // Getting the zipcode to send to the API
         Pair<String, String> locArg = Utility.getPreferredLocation(mContext);
@@ -411,9 +413,18 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
                 mContext.getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -1);
+                String yesterday = WeatherContract.getDbDateString(cal.getTime());
+                getContext().getContentResolver().delete(
+                        WeatherEntry.CONTENT_URI,
+                        WeatherEntry.COLUMN_DATETEXT + " <= ?",
+                        new String[]{yesterday}
+                );
+                if (Utility.areNotificationsEnabled(getContext())) notifyWeather();
+
+                Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
             }
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
-            if(Utility.areNotificationsEnabled(getContext()))notifyWeather();
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -422,6 +433,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // This will only happen if there was an error getting or parsing the forecast.
         return;
+    }
+
+    private void deleteOldData() {
+
     }
 
     /**
